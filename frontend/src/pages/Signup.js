@@ -1,133 +1,71 @@
 import React, { useState } from "react";
-import "./Auth.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useStore } from "../context/StoreContext";
+import { register } from "../services/api";
 
-function Signup({ setUser }) {
-
+function Signup() {
   const navigate = useNavigate();
+  const { setUser } = useStore();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+  const [error, setError] = useState("");
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSignup = (e) => {
-
-    e.preventDefault();
-  
-    if (!email || !password) {
-      alert("Enter email and password");
-      return;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const { data } = await register(formData);
+      localStorage.setItem("token", data.token);
+      setUser(data);
+      navigate("/");
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "Registration failed");
     }
-  
-    const newUser = {
-      email,
-      displayName: email.split("@")[0],
-      createdAt: new Date().toLocaleString()
-    };
-  
-    // get existing users
-    const existingUsers =
-      JSON.parse(localStorage.getItem("users")) || [];
-  
-    // check duplicate
-    const userExists = existingUsers.find(
-      u => u.email === email
-    );
-  
-    if (userExists) {
-      alert("User already exists");
-      return;
-    }
-  
-    // add new user
-    existingUsers.push(newUser);
-  
-    localStorage.setItem(
-      "users",
-      JSON.stringify(existingUsers)
-    );
-  
-    // login user
-    localStorage.setItem(
-      "user",
-      JSON.stringify(newUser)
-    );
-  
-    setUser(newUser);
-  
-    alert("Signup successful");
-  
-    navigate("/");
-  
   };
-  
-
-  const handleGoogleSignup = () => {
-
-    const userData = {
-      email: "googleuser@gmail.com",
-      displayName: "Google User"
-    };
-
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    setUser(userData);
-
-    navigate("/");
-
-  };
-  
 
   return (
-
-    <div className="auth-container">
-
-      <div className="auth-card">
-
-        <h2>Create Account</h2>
-
-        <form onSubmit={handleSignup}>
-
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-surface via-white to-cyan-50 px-4">
+      <div className="w-full max-w-md rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-panel backdrop-blur">
+        <p className="text-sm uppercase tracking-[0.4em] text-slate-400">Join ShopSphere</p>
+        <h1 className="mt-3 text-3xl font-bold text-slate-900">Create your account</h1>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <input
+            type="text"
+            placeholder="Full name"
+            value={formData.name}
+            onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3"
+          />
           <input
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
+            value={formData.email}
+            onChange={(event) => setFormData((current) => ({ ...current, email: event.target.value }))}
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3"
           />
-
           <input
             type="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
+            value={formData.password}
+            onChange={(event) => setFormData((current) => ({ ...current, password: event.target.value }))}
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3"
           />
-
-          <button type="submit">
-            Signup
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button className="gradient-btn w-full">
+            Create account
           </button>
-
         </form>
-
-        <div className="auth-divider">
-          OR
-        </div>
-
-        <button
-          className="google-btn"
-          onClick={handleGoogleSignup}
-        >
-          Sign up with Google
-        </button>
-
+        <p className="mt-6 text-sm text-slate-500">
+          Already have an account?{" "}
+          <Link to="/login" className="font-semibold text-brand-primary">
+            Sign in
+          </Link>
+        </p>
       </div>
-
     </div>
-
   );
-
 }
 
 export default Signup;
