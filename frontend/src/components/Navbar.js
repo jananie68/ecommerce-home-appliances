@@ -1,25 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
-function Navbar({ cartCount, user, setUser, setCart, search, setSearch })
-
- {
+function Navbar({ cartCount, user, setUser, setCart, search, setSearch }) {
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const navigate = useNavigate();
 
 
 
   const logout = () => {
-
     signOut(auth).then(() => {
-  
       setUser(null);
-  
       localStorage.removeItem("user");
-  
+      localStorage.removeItem("token");
+      setShowUserMenu(false);
+      navigate("/");
     });
-  
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+    setShowUserMenu(false);
   };
   
   
@@ -54,6 +57,9 @@ function Navbar({ cartCount, user, setUser, setCart, search, setSearch })
       {cartCount}
     </span>
   )}
+
+</Link>
+
  {user && user.email === "admin@gmail.com" && (
   <Link to="/admin-dashboard">
     Admin Panel
@@ -62,19 +68,32 @@ function Navbar({ cartCount, user, setUser, setCart, search, setSearch })
 
 
 
-</Link>
-
-
-
         {!user && <Link to="/login">Login</Link>}
 
         {!user && <Link to="/signup">Signup</Link>}
 
         {user && (
-          <>
-            <span>Hello, {user.displayName}</span>
-            <button onClick={logout}>Logout</button>
-          </>
+          <div className="user-menu-container">
+            <button 
+              className="user-menu-btn"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              👤 {user.displayName || user.name}
+            </button>
+            {showUserMenu && (
+              <div className="user-dropdown">
+                <Link to="/user-dashboard" onClick={() => setShowUserMenu(false)}>
+                  My Dashboard
+                </Link>
+                <Link to="/profile" onClick={() => setShowUserMenu(false)}>
+                  Profile Settings
+                </Link>
+                <button className="logout-btn" onClick={logout}>
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         )}
 
       </div>
