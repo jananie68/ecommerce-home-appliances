@@ -47,20 +47,7 @@ function AppShell() {
 
   return (
     <div className="min-h-screen bg-sand text-slate-900">
-      {!isAdminRoute ? (
-        <div className="border-b border-white/60 bg-ink text-white">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3 text-xs font-medium tracking-[0.22em] text-slate-300">
-            <div className="flex items-center gap-2">
-              <ShieldCheck size={14} />
-              Secure appliance shopping, expert advice, and fast support.
-            </div>
-            <div className="hidden items-center gap-2 md:flex">
-              <Headset size={14} />
-              Call us for installation support and warranty help.
-            </div>
-          </div>
-        </div>
-      ) : null}
+      
 
       <header className={`sticky top-0 z-30 ${isAdminRoute ? "bg-white/90" : "bg-sand/90"} backdrop-blur-xl`}>
         <div className="mx-auto max-w-7xl px-6 py-4">

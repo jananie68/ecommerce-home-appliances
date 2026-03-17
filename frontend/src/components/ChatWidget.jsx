@@ -22,14 +22,17 @@ function ChatWidget({ currentProductId }) {
     }
 
     const userMessage = { role: "user", content: question };
-    setMessages((current) => [...current, userMessage]);
+    const nextMessages = [...messages, userMessage];
+
+    setMessages(nextMessages);
     setInput("");
     setLoading(true);
 
     try {
       const response = await api.post("/chatbot", {
         question,
-        currentProductId
+        currentProductId,
+        history: nextMessages.slice(-8)
       });
 
       setMessages((current) => [...current, { role: "assistant", content: response.data.answer }]);

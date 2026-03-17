@@ -33,8 +33,8 @@ Modern full-stack eCommerce web application for a home appliances shop, built wi
 2. Copy env files:
 
    ```bash
-   copy backend\\.env.example backend\\.env
-   copy frontend\\.env.example frontend\\.env
+   copy backend\.env.example backend\.env
+   copy frontend\.env.example frontend\.env
    ```
 
 3. Start MongoDB locally or update `MONGODB_URI` in `backend/.env`.
@@ -57,3 +57,13 @@ Modern full-stack eCommerce web application for a home appliances shop, built wi
 - Admin password: `Admin@12345`
 
 Change these in production and regenerate secrets before deployment.
+
+## Verification
+
+- Frontend production build: `npm run build --prefix frontend`
+- Backend smoke test (from `backend/`): `node -e "import('./src/server.js'); setTimeout(() => process.exit(0), 1000)"`
+
+## Notes
+
+- Tailwind configuration lives in `frontend/tailwind.config.js`.
+- API endpoints are documented in `backend/README.md`.

@@ -18,7 +18,7 @@ function UserNavbar({ categories = [], search = "", onSearchChange }) {
   );
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/60 bg-white/80 text-slate-900 shadow-soft backdrop-blur rounded-lg ">
+    <header className="sticky top-0 z-50 rounded-lg border-b border-white/60 bg-white/80 text-slate-900 shadow-soft backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-4">
         <Link to="/" className="bg-brand-gradient bg-clip-text text-2xl font-bold tracking-wide text-transparent">
           ShopSphere
