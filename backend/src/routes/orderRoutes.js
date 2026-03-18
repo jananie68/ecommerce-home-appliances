@@ -7,15 +7,32 @@ import { Product } from "../models/Product.js";
 
 const router = express.Router();
 
+function getRazorpayCredentials() {
+  const keyId = process.env.RAZORPAY_KEY_ID?.trim();
+  const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();
+
+  if (!keyId || !keySecret) {
+    return null;
+  }
+
+  return { keyId, keySecret };
+}
+
 function getRazorpayClient() {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+  const credentials = getRazorpayCredentials();
+
+  if (!credentials) {
     return null;
   }
 
   return new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
+    key_id: credentials.keyId,
+    key_secret: credentials.keySecret
   });
+}
+
+function isRazorpayAuthError(error) {
+  return error?.statusCode === 401 && error?.error?.code === "BAD_REQUEST_ERROR";
 }
 
 async function buildOrderItems(cartItems) {
@@ -86,12 +103,26 @@ router.post("/create", protect, async (req, res, next) => {
     };
 
     if (razorpay) {
-      gatewayOrder = await razorpay.orders.create({
-        amount: totals.total * 100,
-        currency: "INR",
-        receipt
-      });
+      try {
+        gatewayOrder = await razorpay.orders.create({
+          amount: totals.total * 100,
+          currency: "INR",
+          receipt
+        });
+      } catch (error) {
+        if (isRazorpayAuthError(error)) {
+          const authError = new Error(
+            "Razorpay authentication failed. Update RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET with an active matching API key pair from the same Razorpay mode."
+          );
+          authError.statusCode = 502;
+          throw authError;
+        }
+
+        throw error;
+      }
     }
+
+    const razorpayCredentials = getRazorpayCredentials();
 
     const order = await Order.create({
       user: req.user._id,
@@ -108,7 +139,7 @@ router.post("/create", protect, async (req, res, next) => {
     res.status(201).json({
       orderId: order._id,
       razorpayOrder: gatewayOrder,
-      keyId: process.env.RAZORPAY_KEY_ID || "demo_key",
+      keyId: razorpayCredentials?.keyId || "demo_key",
       totals
     });
   } catch (error) {
@@ -127,10 +158,11 @@ router.post("/verify", protect, async (req, res, next) => {
     }
 
     let paymentVerified = false;
+    const razorpayCredentials = getRazorpayCredentials();
 
-    if (process.env.RAZORPAY_KEY_SECRET) {
+    if (razorpayCredentials?.keySecret) {
       const generatedSignature = crypto
-        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+        .createHmac("sha256", razorpayCredentials.keySecret)
         .update(`${razorpayOrderId}|${razorpayPaymentId}`)
         .digest("hex");
 

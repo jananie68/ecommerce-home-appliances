@@ -16,10 +16,16 @@ Express and MongoDB backend for the e-commerce platform.
 Create `backend/.env` with:
 
 ```env
-MONGO_URI=mongodb://localhost:27017/ecommerce
-JWT_SECRET=your_secret_key
+MONGODB_URI=mongodb://127.0.0.1:27017/sri-palani-andavan-electronics
+JWT_SECRET=replace-with-a-long-random-secret
+JWT_EXPIRES_IN=7d
+FRONTEND_URL=http://localhost:5173
 PORT=5000
+RAZORPAY_KEY_ID=rzp_test_xxxxx
+RAZORPAY_KEY_SECRET=your_razorpay_api_secret
 ```
+
+Use the Razorpay API key pair from the dashboard `API Keys` section. Make sure both values are from the same mode (`test` with `test`, or `live` with `live`) and do not use the webhook secret in `RAZORPAY_KEY_SECRET`.
 
 ## Scripts
 
