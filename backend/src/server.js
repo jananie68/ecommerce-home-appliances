@@ -1,5 +1,3 @@
-import path from "path";
-import { fileURLToPath } from "url";
 import compression from "compression";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -9,6 +7,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import helmet from "helmet";
 import morgan from "morgan";
 import { connectToDatabase } from "./config/db.js";
+import { getUploadDirectory } from "./config/paths.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -20,13 +19,47 @@ import userRoutes from "./routes/userRoutes.js";
 dotenv.config();
 
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const port = Number(process.env.PORT || 5000);
+const uploadDirectory = getUploadDirectory();
+
+function normalizeOrigin(origin) {
+  return origin?.trim().replace(/\/+$/, "");
+}
+
+function getAllowedOrigins() {
+  const configuredOrigins = [
+    ...(process.env.FRONTEND_URLS || "")
+      .split(",")
+      .map((origin) => normalizeOrigin(origin))
+      .filter(Boolean),
+    normalizeOrigin(process.env.FRONTEND_URL)
+  ].filter(Boolean);
+
+  if (configuredOrigins.length) {
+    return [...new Set(configuredOrigins)];
+  }
+
+  return ["http://localhost:5173", "http://127.0.0.1:5173"];
+}
+
+const allowedOrigins = getAllowedOrigins();
+
+if (process.env.TRUST_PROXY || process.env.NODE_ENV === "production") {
+  app.set("trust proxy", process.env.TRUST_PROXY || 1);
+}
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin(origin, callback) {
+      const normalizedOrigin = normalizeOrigin(origin);
+
+      if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Origin is not allowed by CORS."));
+    },
     credentials: true
   })
 );
@@ -54,7 +87,7 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-app.use("/uploads", express.static(path.resolve(__dirname, "../uploads")));
+app.use("/uploads", express.static(uploadDirectory));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", service: "Sri Palani Andavan Electronics API" });
@@ -73,7 +106,7 @@ app.use(errorHandler);
 connectToDatabase()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Server running on http://localhost:${port}`);
+      console.log(`Server running on port ${port}`);
     });
   })
   .catch((error) => {

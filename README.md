@@ -59,8 +59,16 @@ Change these in production and regenerate secrets before deployment.
 
 ## Verification
 
+- Full deployment check: `npm run deploy:check`
 - Frontend production build: `npm run build --prefix frontend`
 - Backend smoke test (from `backend/`): `node -e "import('./src/server.js'); setTimeout(() => process.exit(0), 1000)"`
+
+## Deployment
+
+- Recommended frontend host: Vercel using the `frontend/` directory
+- Recommended backend host: Render using the `backend/` directory
+- Recommended database: MongoDB Atlas
+- Full deployment steps: [DEPLOYMENT.md](/c:/projects/ecommerce-home-appliances/DEPLOYMENT.md)
 
 ## Notes
 

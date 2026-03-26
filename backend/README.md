@@ -20,12 +20,17 @@ MONGODB_URI=mongodb://127.0.0.1:27017/sri-palani-andavan-electronics
 JWT_SECRET=replace-with-a-long-random-secret
 JWT_EXPIRES_IN=7d
 FRONTEND_URL=http://localhost:5173
+FRONTEND_URLS=http://localhost:5173
+TRUST_PROXY=0
+UPLOAD_DIR=
 PORT=5000
 RAZORPAY_KEY_ID=rzp_test_xxxxx
 RAZORPAY_KEY_SECRET=your_razorpay_api_secret
 ```
 
 Use the Razorpay API key pair from the dashboard `API Keys` section. Make sure both values are from the same mode (`test` with `test`, or `live` with `live`) and do not use the webhook secret in `RAZORPAY_KEY_SECRET`.
+
+For deployment, prefer `FRONTEND_URLS` for a comma-separated allowlist of frontend domains. `UPLOAD_DIR` lets you move product image uploads onto persistent storage instead of the local project folder.
 
 ## Scripts
 
