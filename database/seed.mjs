@@ -31,6 +31,7 @@ if (fs.existsSync(envPath)) {
 async function seed() {
   await connectToDatabase();
 
+  await Promise.all([User.syncIndexes(), Product.syncIndexes(), Order.syncIndexes()]);
   await Promise.all([Order.deleteMany({}), Product.deleteMany({}), User.deleteMany({})]);
 
   const admin = await User.create({
