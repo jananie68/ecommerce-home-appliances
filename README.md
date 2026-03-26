@@ -2,7 +2,7 @@
 
 Modern full-stack eCommerce web application for a home appliances shop, built with React, Tailwind CSS, Express, MongoDB, JWT authentication, Razorpay payments, Groq-powered chatbot support, and Google Translate integration.
 
-## Project Structure
+## Project Structureol
 
 - `frontend/` - Vite + React storefront
 - `backend/` - Express API, JWT auth, MongoDB models, Razorpay and Groq integrations
@@ -50,7 +50,6 @@ Modern full-stack eCommerce web application for a home appliances shop, built wi
    ```bash
    npm run dev
    ```
-
 ## Demo Credentials
 
 - Admin email: `admin@sripalaniandavan.com`
@@ -67,3 +66,10 @@ Change these in production and regenerate secrets before deployment.
 
 - Tailwind configuration lives in `frontend/tailwind.config.js`.
 - API endpoints are documented in `backend/README.md`.
+
+## Mobile App (Expo)
+
+- Location: `mobile-app/`
+- Quick start: `cd mobile-app && npm install && npm run start`
+- Configure `EXPO_PUBLIC_API_URL` and `EXPO_PUBLIC_BACKEND_URL` for device/emulator access (defaults point to `http://localhost:5000`).
+- See [mobile-app/README.md](mobile-app/README.md) for details.

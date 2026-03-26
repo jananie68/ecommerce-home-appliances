@@ -61,6 +61,82 @@ const orderItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const shipmentProviderSchema = new mongoose.Schema(
+  {
+    code: String,
+    name: String,
+    serviceType: String,
+    supportPhone: String,
+    supportEmail: String
+  },
+  { _id: false }
+);
+
+const shipmentPackageSchema = new mongoose.Schema(
+  {
+    pieces: Number,
+    weightKg: Number,
+    bulky: Boolean,
+    installationRequired: Boolean,
+    handlingNote: String
+  },
+  { _id: false }
+);
+
+const shipmentRouteStopSchema = new mongoose.Schema(
+  {
+    label: String,
+    city: String,
+    state: String,
+    type: String,
+    completed: Boolean
+  },
+  { _id: false }
+);
+
+const shipmentEventSchema = new mongoose.Schema(
+  {
+    code: String,
+    label: String,
+    details: String,
+    locationLabel: String,
+    city: String,
+    state: String,
+    completed: Boolean,
+    isCurrent: Boolean,
+    timestamp: Date
+  },
+  { _id: false }
+);
+
+const shipmentSchema = new mongoose.Schema(
+  {
+    orderStatus: String,
+    trackingNumber: String,
+    manifestNumber: String,
+    serviceType: String,
+    statusCode: String,
+    statusLabel: String,
+    statusNote: String,
+    currentLocation: String,
+    estimatedDeliveryStart: Date,
+    estimatedDeliveryEnd: Date,
+    actualDeliveryAt: Date,
+    lastUpdatedAt: Date,
+    provider: shipmentProviderSchema,
+    packageSummary: shipmentPackageSchema,
+    route: {
+      type: [shipmentRouteStopSchema],
+      default: []
+    },
+    events: {
+      type: [shipmentEventSchema],
+      default: []
+    }
+  },
+  { _id: false }
+);
+
 const orderSchema = new mongoose.Schema(
   {
     user: {
@@ -84,9 +160,20 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending-payment", "confirmed", "processing", "shipped", "delivered", "cancelled"],
+      enum: [
+        "pending-payment",
+        "confirmed",
+        "processing",
+        "picked-up",
+        "shipped",
+        "out-for-delivery",
+        "delivered",
+        "delivery-exception",
+        "cancelled"
+      ],
       default: "pending-payment"
     },
+    shipment: shipmentSchema,
     payment: {
       provider: {
         type: String,

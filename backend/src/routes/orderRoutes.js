@@ -4,6 +4,11 @@ import Razorpay from "razorpay";
 import { protect, requireAdmin } from "../middleware/auth.js";
 import { Order } from "../models/Order.js";
 import { Product } from "../models/Product.js";
+import {
+  ALLOWED_ORDER_STATUSES,
+  shipmentNeedsHydration,
+  synchronizeOrderShipment
+} from "../services/mockDeliveryService.js";
 
 const router = express.Router();
 
@@ -77,6 +82,19 @@ function calculateTotals(items) {
   };
 }
 
+async function hydrateOrderShipments(orders) {
+  await Promise.all(
+    orders.map(async (order) => {
+      if (!shipmentNeedsHydration(order)) {
+        return;
+      }
+
+      synchronizeOrderShipment(order, order.updatedAt || order.createdAt || new Date());
+      await order.save();
+    })
+  );
+}
+
 router.post("/create", protect, async (req, res, next) => {
   try {
     const { cartItems, address } = req.body;
@@ -136,6 +154,9 @@ router.post("/create", protect, async (req, res, next) => {
       }
     });
 
+    synchronizeOrderShipment(order, order.createdAt || new Date());
+    await order.save();
+
     res.status(201).json({
       orderId: order._id,
       razorpayOrder: gatewayOrder,
@@ -183,6 +204,7 @@ router.post("/verify", protect, async (req, res, next) => {
     order.payment.razorpayOrderId = razorpayOrderId;
     order.payment.razorpayPaymentId = razorpayPaymentId;
     order.payment.razorpaySignature = razorpaySignature;
+    synchronizeOrderShipment(order, new Date());
     await order.save();
 
     for (const item of order.items) {
@@ -208,6 +230,7 @@ router.post("/verify", protect, async (req, res, next) => {
 router.get("/mine", protect, async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
+    await hydrateOrderShipments(orders);
     res.json({ orders });
   } catch (error) {
     next(error);
@@ -220,6 +243,7 @@ router.get("/all", protect, requireAdmin, async (req, res, next) => {
       .sort({ createdAt: -1 })
       .populate("user", "name email phone");
 
+    await hydrateOrderShipments(orders);
     res.json({ orders });
   } catch (error) {
     next(error);
@@ -229,9 +253,8 @@ router.get("/all", protect, requireAdmin, async (req, res, next) => {
 router.patch("/:id/status", protect, requireAdmin, async (req, res, next) => {
   try {
     const { status } = req.body;
-    const allowedStatuses = ["confirmed", "processing", "shipped", "delivered", "cancelled"];
 
-    if (!allowedStatuses.includes(status)) {
+    if (!ALLOWED_ORDER_STATUSES.includes(status)) {
       res.status(400).json({ message: "Invalid order status." });
       return;
     }
@@ -243,6 +266,7 @@ router.patch("/:id/status", protect, requireAdmin, async (req, res, next) => {
     }
 
     order.status = status;
+    synchronizeOrderShipment(order, new Date());
     await order.save();
 
     res.json({

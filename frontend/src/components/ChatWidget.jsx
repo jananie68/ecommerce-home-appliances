@@ -6,7 +6,7 @@ import { api } from "../lib/api";
 const starterMessages = [
   {
     role: "assistant",
-    content: "Hello from Sri Palani Andavan Electronics. Ask me about appliances, warranties, or the best product for your budget."
+    content: "Hello from Sri Palani Andavar Electronics. Ask me about appliances, warranties, or the best product for your budget."
   }
 ];
 
@@ -58,7 +58,7 @@ function ChatWidget({ currentProductId }) {
         <div className="fixed bottom-24 right-6 z-40 flex h-[32rem] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white shadow-[0_28px_100px_rgba(9,17,34,0.24)]">
           <div className="flex items-center justify-between bg-ink px-5 py-4 text-white">
             <div>
-              <p className="font-display text-lg font-bold">Groq Shopping Assistant</p>
+              <p className="font-display text-lg font-bold">S P A 's--   Shopping Assistant</p>
               <p className="text-xs text-slate-300">Fast product advice for every appliance category</p>
             </div>
             <Bot size={22} />

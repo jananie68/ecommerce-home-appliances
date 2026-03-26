@@ -59,7 +59,7 @@ function AppShell() {
                 </div>
                 <div className="min-w-0">
                   <p className="font-display text-lg font-bold text-ink sm:text-xl">
-                    Sri Palani Andavan Electronics
+                    Sri Palani Andavar Electronics
                   </p>
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
                     Home appliances boutique
@@ -237,7 +237,7 @@ function AppShell() {
           <footer className="mt-20 border-t border-white/60 bg-ink text-slate-300">
             <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[2fr_1fr_1fr]">
               <div className="space-y-4">
-                <p className="font-display text-2xl font-bold text-white">Sri Palani Andavan Electronics</p>
+                <p className="font-display text-2xl font-bold text-white">Sri Palani Andavar Electronics</p>
                 <p className="max-w-lg text-sm leading-7">
                   Discover premium home appliances with expert guidance, flexible checkout, trusted warranties,
                   and support built for modern households.

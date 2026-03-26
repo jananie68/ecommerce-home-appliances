@@ -4,7 +4,7 @@ const highlights = [
   {
     icon: Store,
     title: "Trusted local shop roots",
-    description: "Sri Palani Andavan Electronics brings the confidence of an in-store appliance expert to a digital shopping experience."
+    description: "Sri Palani Andavar Electronics brings the confidence of an in-store appliance expert to a digital shopping experience."
   },
   {
     icon: Cpu,
@@ -32,7 +32,7 @@ function AboutPage() {
           A modern electronics storefront inspired by the trust and clarity of the best retail showrooms.
         </h1>
         <p className="mt-6 max-w-3xl text-base leading-8 text-slate-600">
-          Sri Palani Andavan Electronics is designed for customers who want more than a product grid. It combines
+          Sri Palani Andavar Electronics is designed for customers who want more than a product grid. It combines
           deep appliance information, secure checkout, responsive support, and a beautifully guided browsing
           experience across mobile and desktop.
         </p>

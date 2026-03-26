@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Heart, Package, Settings, ShoppingBag, UserCircle2 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import ShipmentTrackerCard from "@/components/ShipmentTrackerCard";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { api, getAssetUrl } from "@/lib/api";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency, formatDate, formatDateTime, formatStatusLabel } from "@/lib/format";
 
 const tabs = [
   { key: "overview", label: "Overview", icon: ShoppingBag },
@@ -112,7 +113,7 @@ function UserOverview() {
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-ink">{formatCurrency(order.totals?.total || 0)}</p>
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{order.status}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{formatStatusLabel(order.status)}</p>
                   </div>
                 </div>
               </div>
@@ -149,15 +150,19 @@ function UserOrders() {
               <div key={order._id} className="rounded-[24px] bg-slate-50 p-5">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="font-semibold text-ink">Order placed {formatDate(order.createdAt)}</p>
+                    <p className="font-semibold text-ink">Order #{order._id.slice(-8).toUpperCase()}</p>
                     <p className="mt-1 text-sm text-slate-500">
-                      {order.items.length} items • Payment {order.payment?.status}
+                      {`Placed ${formatDateTime(order.createdAt)} | ${order.items.length} items | Payment ${order.payment?.status}`}
                     </p>
                   </div>
                   <div className="text-left sm:text-right">
                     <p className="font-bold text-ink">{formatCurrency(order.totals?.total || 0)}</p>
-                    <p className="text-xs uppercase tracking-[0.18em] text-coral">{order.status}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-coral">{formatStatusLabel(order.status)}</p>
                   </div>
+                </div>
+
+                <div className="mt-5">
+                  <ShipmentTrackerCard order={order} showItems />
                 </div>
               </div>
             ))

@@ -10,9 +10,10 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import ShipmentTrackerCard from "@/components/ShipmentTrackerCard";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency, formatDate, formatDateTime, formatStatusLabel } from "@/lib/format";
 
 const tabs = [
   { key: "overview", label: "Overview", icon: BarChart3 },
@@ -37,6 +38,18 @@ const emptyProduct = {
   tags: "",
   isFeatured: false
 };
+
+const orderStatusOptions = [
+  "pending-payment",
+  "confirmed",
+  "processing",
+  "picked-up",
+  "shipped",
+  "out-for-delivery",
+  "delivered",
+  "delivery-exception",
+  "cancelled"
+];
 
 function AdminRoutes() {
   const [searchParams, setSearchParams] = useSearchParams();

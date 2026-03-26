@@ -102,7 +102,7 @@ function CheckoutPage() {
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         order_id: razorpayOrder.id,
-        name: "Sri Palani Andavan Electronics",
+        name: "Sri Palani Andavar Electronics",
         description: "Secure appliance checkout",
         handler: async (response) => {
           await verifyAndFinish(orderId, {

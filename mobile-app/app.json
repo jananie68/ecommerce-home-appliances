@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Ecommerce Mobile",
+    "slug": "ecommerce-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "jsEngine": "hermes",
+    "newArchEnabled": true,
+    "assetBundlePatterns": ["**/*"],
+    "platforms": ["ios", "android", "web"],
+    "extra": {
+      "apiUrl": "http://localhost:5000/api",
+      "backendUrl": "http://localhost:5000"
+    }
+  }
+}
